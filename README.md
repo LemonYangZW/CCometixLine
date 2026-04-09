@@ -11,16 +11,19 @@ A high-performance Claude Code statusline tool written in Rust. This fork adds *
 
 ## What's New in This Fork
 
-### Sub2API Usage Tracking
+### Sub2API Usage Tracking (Dedicated Segment)
+- **Independent Sub2Api segment** — separated from Usage, directly visible in TUI configurator
 - **5H / 7D progress bars** with real-time Anthropic account utilization
 - **Heat-gradient rendering**: teal -> green -> lime -> yellow -> orange -> red
 - **Sub-block precision**: Unicode partial blocks (160 discrete levels at width=20)
 - **Reset countdown**: pulsing diamond indicator with time-to-reset
-- **4-source data pipeline** (priority order):
-  1. Claude Code stdin `rate_limits`
-  2. Sub2API Admin API (login -> key resolve -> usage log -> account usage)
-  3. Sub2API Gateway `/v1/usage`
-  4. Anthropic OAuth
+- **Data sources** (priority order):
+  1. Sub2API Admin API (login -> key resolve -> usage log -> account usage)
+  2. Sub2API Gateway `/v1/usage`
+
+### Usage Segment (Native)
+- **Claude Code stdin** `rate_limits` (5H / 7D utilization from stdin)
+- **Anthropic OAuth** token-based usage query
 
 ### Auto Admin Chain
 - **Zero-config account detection**: Automatically discovers which upstream Claude account is in use via the latest usage log record
@@ -29,6 +32,7 @@ A high-performance Claude Code statusline tool written in Rust. This fork adds *
 
 ### TUI Options Editor
 - Configure Sub2API credentials, bar style, cache durations directly in `ccline -c`
+- Sub2Api segment has its own dedicated Options panel — no longer hidden inside Usage
 - Schema-driven modal popup with Text / Password / Number field types
 
 ## Screenshots
@@ -69,7 +73,7 @@ Add to your Claude Code `settings.json`:
 
 ### Sub2API Usage Configuration
 
-Run `ccline -c`, navigate to Usage segment -> Options, and configure:
+Run `ccline -c`, select the **Sub2Api** segment in the left panel, then navigate to **Options** to configure:
 
 | Field | Description |
 |-------|-------------|
@@ -77,13 +81,19 @@ Run `ccline -c`, navigate to Usage segment -> Options, and configure:
 | Admin Password | Sub2API admin login password |
 | API Base URL | Your Sub2API gateway URL (auto-detected from `ANTHROPIC_BASE_URL`) |
 | Bar Style | `heat` (gradient) / `block` (classic) |
+| Bar Colored | `true` / `false` (ANSI RGB colors) |
 | Bar Width | Progress bar width in chars (default: 20) |
 | Cache Duration | Usage data refresh interval in seconds (default: 60) |
 | Auth Cache Duration | JWT token cache TTL in seconds (default: 3600) |
+| Timeout | HTTP request timeout in seconds (default: 5) |
 
-Or edit `~/.claude/ccline/config.toml` directly:
+Or edit `~/.claude/ccline/config.toml` directly (under the Sub2Api segment):
 
 ```toml
+[[segments]]
+id = "sub2_api"
+enabled = true
+
 [segments.options]
 admin_email = "admin@sub2api.local"
 admin_password = "your-password"

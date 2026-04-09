@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2-nekoline.2] - 2026-04-09
+
+### Added
+- **Sub2Api Segment**: Extracted Sub2API functionality into a dedicated independent segment
+  - Sub2API now appears as its own entry ("Sub2Api") in the TUI segment list (`ccline -c`)
+  - Admin email, password, API base URL and other Sub2API options are directly discoverable
+  - No longer hidden inside Usage → Options submenu
+- **Shared Usage Utilities**: New `usage_common.rs` module for code shared between Usage and Sub2Api segments
+  - Progress bar rendering (heat-gradient, sub-block precision)
+  - Countdown formatting with pulsing diamond indicator
+  - HTTP agent builder with proxy support
+  - Cache timestamp validation helpers
+
+### Changed
+- **Usage Segment Simplified**: Reduced from ~998 lines to ~160 lines
+  - Now only handles Claude Code stdin `rate_limits` and Anthropic OAuth data sources
+  - Sub2API Admin chain and Gateway logic moved to the new Sub2Api segment
+- **NPM Package Scope**: Update check URL changed from `@cometix/ccline` to `@nekoline/ccline`
+- **Options Editor Schema**: Usage segment options simplified to bar style/width/colored/timeout; Sub2Api segment has full credential + cache configuration
+
+### Architecture
+- `src/core/segments/usage_common.rs` — shared utilities (progress bar, countdown, HTTP, cache)
+- `src/core/segments/sub2api.rs` — Sub2API Admin 4-step chain + Gateway + caching
+- `src/core/segments/usage.rs` — stdin rate_limits + Anthropic OAuth only
+- All 9 theme presets updated with `sub2api_segment()` (default: disabled)
+
 ## [1.1.2] - 2026-03-15
 
 ### Changed

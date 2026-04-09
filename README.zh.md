@@ -18,7 +18,8 @@
 ### 核心功能
 - **Git 集成** 显示分支、状态和跟踪信息
 - **模型显示** 简化的 Claude 模型名称
-- **使用量跟踪** 基于转录文件分析  
+- **使用量跟踪** 基于 stdin rate_limits 和 Anthropic OAuth
+- **Sub2API 使用量** 独立段落，支持 Admin API 4步链 + Gateway 数据源
 - **目录显示** 显示当前工作空间
 - **简洁设计** 使用 Nerd Font 图标
 
@@ -230,7 +231,7 @@ CCometixLine 支持通过 TOML 文件和交互式 TUI 进行完整配置：
 - 颜色自定义
 - 格式选项
 
-支持的段落：目录、Git、模型、使用量、时间、成本、输出样式
+支持的段落：目录、Git、模型、使用量、Sub2Api、时间、成本、输出样式
 
 ### 模型配置 (`models.toml`)
 
@@ -281,6 +282,41 @@ cargo test
 
 # 构建优化版本
 cargo build --release
+```
+
+### Sub2API 配置
+
+运行 `ccline -c`，在左侧段落列表中选择 **Sub2Api**，然后进入 **Options** 配置：
+
+| 字段 | 说明 |
+|------|------|
+| Admin Email | Sub2API 管理员登录邮箱 |
+| Admin Password | Sub2API 管理员登录密码 |
+| API Base URL | Sub2API 网关地址（自动从 `ANTHROPIC_BASE_URL` 检测） |
+| Bar Style | 进度条样式：heat (渐变) / block (经典) |
+| Bar Colored | 是否启用 ANSI RGB 着色：true / false |
+| Bar Width | 进度条字符宽度（默认 20） |
+| Cache Duration | 使用量数据刷新间隔，秒（默认 60） |
+| Auth Cache Duration | JWT 令牌缓存 TTL，秒（默认 3600） |
+| Timeout | HTTP 请求超时，秒（默认 5） |
+
+或直接编辑 `~/.claude/ccline/config.toml`（Sub2Api 段落下）：
+
+```toml
+[[segments]]
+id = "sub2_api"
+enabled = true
+
+[segments.options]
+admin_email = "admin@sub2api.local"
+admin_password = "your-password"
+api_base_url = "https://your-sub2api.com"
+bar_style = "heat"
+bar_colored = "true"
+bar_width = 20
+cache_duration = 60
+auth_cache_duration = 3600
+timeout = 5
 ```
 
 ## 路线图
