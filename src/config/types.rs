@@ -253,6 +253,20 @@ impl NormalizedUsage {
 }
 
 impl Config {
+    /// Append any segment IDs present in the default theme but missing from
+    /// this config. This keeps old config.toml / theme files forward-compatible
+    /// when new segments are introduced in newer versions.
+    pub fn backfill_missing_segments(&mut self) {
+        let preset = crate::ui::themes::ThemePresets::get_builtin_theme(&self.theme);
+        let existing: std::collections::HashSet<SegmentId> =
+            self.segments.iter().map(|s| s.id).collect();
+        for seg in &preset.segments {
+            if !existing.contains(&seg.id) {
+                self.segments.push(seg.clone());
+            }
+        }
+    }
+
     /// Check if current config matches the specified theme preset
     pub fn matches_theme(&self, theme_name: &str) -> bool {
         let theme_preset = crate::ui::themes::ThemePresets::get_theme(theme_name);

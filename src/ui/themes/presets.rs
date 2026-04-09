@@ -18,6 +18,12 @@ impl ThemePresets {
         }
 
         // Fallback to built-in themes
+        Self::get_builtin_theme(theme_name)
+    }
+
+    /// Return built-in theme preset without reading from file system.
+    /// Used by `backfill_missing_segments` to avoid recursive file loading.
+    pub fn get_builtin_theme(theme_name: &str) -> Config {
         match theme_name {
             "cometix" => Self::get_cometix(),
             "default" => Self::get_default(),
@@ -46,6 +52,9 @@ impl ThemePresets {
 
         // Ensure the theme field matches the requested theme
         config.theme = theme_name.to_string();
+
+        // Backfill any segments added in newer versions
+        config.backfill_missing_segments();
 
         Ok(config)
     }
