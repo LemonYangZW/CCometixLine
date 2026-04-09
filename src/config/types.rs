@@ -73,6 +73,7 @@ pub enum SegmentId {
     Session,
     OutputStyle,
     Update,
+    Sub2Api,
 }
 
 // Legacy compatibility structure

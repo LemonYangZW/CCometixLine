@@ -141,6 +141,11 @@ impl PreviewComponent {
                     secondary: "· 10-7-2".to_string(),
                     metadata: HashMap::new(),
                 },
+                SegmentId::Sub2Api => SegmentData {
+                    primary: "24%".to_string(),
+                    secondary: "· 10-7-2".to_string(),
+                    metadata: HashMap::new(),
+                },
                 SegmentId::Cost => SegmentData {
                     primary: "$0.02".to_string(),
                     secondary: "".to_string(),

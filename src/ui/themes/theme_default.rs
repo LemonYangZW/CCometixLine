@@ -109,6 +109,36 @@ pub fn usage_segment() -> SegmentConfig {
     }
 }
 
+pub fn sub2api_segment() -> SegmentConfig {
+    SegmentConfig {
+        id: SegmentId::Sub2Api,
+        enabled: false,
+        icon: IconConfig {
+            plain: "🔗".to_string(),
+            nerd_font: "\u{f0219}".to_string(),
+        },
+        colors: ColorConfig {
+            icon: Some(AnsiColor::Color16 { c16: 14 }), // Cyan
+            text: Some(AnsiColor::Color16 { c16: 14 }),
+            background: None,
+        },
+        styles: TextStyleConfig::default(),
+        options: {
+            let mut opts = HashMap::new();
+            opts.insert(
+                "api_base_url".to_string(),
+                serde_json::Value::String("https://api.anthropic.com".to_string()),
+            );
+            opts.insert(
+                "cache_duration".to_string(),
+                serde_json::Value::Number(180.into()),
+            );
+            opts.insert("timeout".to_string(), serde_json::Value::Number(2.into()));
+            opts
+        },
+    }
+}
+
 pub fn cost_segment() -> SegmentConfig {
     SegmentConfig {
         id: SegmentId::Cost,

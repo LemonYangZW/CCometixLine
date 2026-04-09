@@ -258,3 +258,45 @@ pub fn usage_segment() -> SegmentConfig {
         },
     }
 }
+
+pub fn sub2api_segment() -> SegmentConfig {
+    SegmentConfig {
+        id: SegmentId::Sub2Api,
+        enabled: false,
+        icon: IconConfig {
+            plain: "🔗".to_string(),
+            nerd_font: "\u{f0219}".to_string(),
+        },
+        colors: ColorConfig {
+            icon: Some(AnsiColor::Rgb {
+                r: 46,
+                g: 52,
+                b: 64,
+            }),
+            text: Some(AnsiColor::Rgb {
+                r: 46,
+                g: 52,
+                b: 64,
+            }),
+            background: Some(AnsiColor::Rgb {
+                r: 235,
+                g: 203,
+                b: 139,
+            }),
+        },
+        styles: TextStyleConfig::default(),
+        options: {
+            let mut opts = HashMap::new();
+            opts.insert(
+                "api_base_url".to_string(),
+                serde_json::Value::String("https://api.anthropic.com".to_string()),
+            );
+            opts.insert(
+                "cache_duration".to_string(),
+                serde_json::Value::Number(180.into()),
+            );
+            opts.insert("timeout".to_string(), serde_json::Value::Number(2.into()));
+            opts
+        },
+    }
+}

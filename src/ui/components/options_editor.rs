@@ -191,6 +191,32 @@ impl OptionsEditorComponent {
         match segment_id {
             SegmentId::Usage => vec![
                 (
+                    "bar_style".into(),
+                    "Bar Style".into(),
+                    FieldType::Text,
+                    "heat (gradient) / block (classic)".into(),
+                ),
+                (
+                    "bar_colored".into(),
+                    "Bar Colored".into(),
+                    FieldType::Text,
+                    "true / false  (ANSI RGB colors)".into(),
+                ),
+                (
+                    "bar_width".into(),
+                    "Bar Width".into(),
+                    FieldType::Number,
+                    "Progress bar width in chars, default 20".into(),
+                ),
+                (
+                    "timeout".into(),
+                    "Timeout (s)".into(),
+                    FieldType::Number,
+                    "HTTP request timeout, default 5".into(),
+                ),
+            ],
+            SegmentId::Sub2Api => vec![
+                (
                     "admin_email".into(),
                     "Admin Email".into(),
                     FieldType::Text,
