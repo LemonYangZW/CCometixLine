@@ -4,6 +4,7 @@ use crate::ui::components::{
     help::HelpComponent,
     icon_selector::IconSelectorComponent,
     name_input::NameInputComponent,
+    options_editor::OptionsEditorComponent,
     preview::PreviewComponent,
     segment_list::{FieldSelection, Panel, SegmentListComponent},
     separator_editor::SeparatorEditorComponent,
@@ -33,6 +34,7 @@ pub struct App {
     color_picker: ColorPickerComponent,
     icon_selector: IconSelectorComponent,
     name_input: NameInputComponent,
+    options_editor: OptionsEditorComponent,
     preview: PreviewComponent,
     segment_list: SegmentListComponent,
     separator_editor: SeparatorEditorComponent,
@@ -53,6 +55,7 @@ impl App {
             color_picker: ColorPickerComponent::new(),
             icon_selector: IconSelectorComponent::new(),
             name_input: NameInputComponent::new(),
+            options_editor: OptionsEditorComponent::new(),
             preview: PreviewComponent::new(),
             segment_list: SegmentListComponent::new(),
             separator_editor: SeparatorEditorComponent::new(),
@@ -153,6 +156,36 @@ impl App {
                         }
                         KeyCode::Char(c) => app.color_picker.input_char(c),
                         KeyCode::Backspace => app.color_picker.backspace(),
+                        _ => {}
+                    }
+                } else if app.options_editor.is_open {
+                    match key.code {
+                        KeyCode::Esc => {
+                            if app.options_editor.editing {
+                                app.options_editor.cancel_edit();
+                            } else {
+                                // Save options back to config before closing
+                                let opts = app.options_editor.get_options();
+                                if let Some(segment) =
+                                    app.config.segments.get_mut(app.selected_segment)
+                                {
+                                    segment.options = opts;
+                                }
+                                app.options_editor.close();
+                                app.status_message = Some("Options updated".to_string());
+                            }
+                        }
+                        KeyCode::Enter => {
+                            if app.options_editor.editing {
+                                app.options_editor.confirm_edit();
+                            } else {
+                                app.options_editor.start_editing();
+                            }
+                        }
+                        KeyCode::Up => app.options_editor.move_selection(-1),
+                        KeyCode::Down => app.options_editor.move_selection(1),
+                        KeyCode::Char(c) => app.options_editor.input_char(c),
+                        KeyCode::Backspace => app.options_editor.backspace(),
                         _ => {}
                     }
                 } else if app.icon_selector.is_open {
@@ -453,6 +486,9 @@ impl App {
         if self.separator_editor.is_open {
             self.separator_editor.render(f, f.area());
         }
+        if self.options_editor.is_open {
+            self.options_editor.render(f, f.area());
+        }
     }
 
     fn move_selection(&mut self, delta: i32) {
@@ -563,9 +599,10 @@ impl App {
                         }
                     }
                     FieldSelection::Options => {
-                        // TODO: Implement options editor
-                        self.status_message =
-                            Some("Options editor not implemented yet".to_string());
+                        if let Some(segment) = self.config.segments.get(self.selected_segment) {
+                            self.options_editor
+                                .open(segment.id, &segment.options);
+                        }
                     }
                 }
             }

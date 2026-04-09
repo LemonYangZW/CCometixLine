@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 """
 body = """
 {%- macro remote_url() -%}
-  https://github.com/Haleclipse/CCometixLine
+  https://github.com/LemonYangZW/CCometixLine
 {%- endmacro -%}
 
 {% if version -%}
@@ -47,7 +47,7 @@ conventional_commits = true
 filter_unconventional = true
 split_commits = false
 commit_preprocessors = [
-    { pattern = '\(#([0-9]+)\)', replace = "([#${1}](https://github.com/Haleclipse/CCometixLine/pull/${1}))" },
+    { pattern = '\(#([0-9]+)\)', replace = "([#${1}](https://github.com/LemonYangZW/CCometixLine/pull/${1}))" },
 ]
 commit_parsers = [
     { message = "^feat", group = "Added" },

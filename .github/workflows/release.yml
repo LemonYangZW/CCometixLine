@@ -208,11 +208,11 @@ jobs:
       run: |
         # Publish platform packages first
         for platform in darwin-x64 darwin-arm64 linux-x64 linux-x64-musl linux-arm64 linux-arm64-musl win32-x64; do
-          echo "📦 Publishing @cometix/ccline-$platform"
+          echo "📦 Publishing @nekoline/ccline-$platform"
           cd npm-publish/$platform
           npm publish --access public
           cd ../..
-          echo "✅ Published @cometix/ccline-$platform"
+          echo "✅ Published @nekoline/ccline-$platform"
         done
 
     - name: Wait for NPM registry
@@ -225,9 +225,9 @@ jobs:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       run: |
         cd npm-publish/main
-        echo "📦 Publishing @cometix/ccline"
+        echo "📦 Publishing @nekoline/ccline"
         npm publish --access public
-        echo "✅ Published @cometix/ccline"
+        echo "✅ Published @nekoline/ccline"
         echo ""
         echo "🎉 NPM packages published successfully!"
-        echo "Install with: npm install -g @cometix/ccline"
+        echo "Install with: npm install -g @nekoline/ccline"

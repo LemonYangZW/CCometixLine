@@ -39,30 +39,54 @@ impl StatusLineGenerator {
     }
 
     pub fn generate(&self, segments: Vec<(SegmentConfig, SegmentData)>) -> String {
-        let mut output = Vec::new();
+        let mut inline_output = Vec::new();
+        let mut block_lines: Vec<String> = Vec::new();
         let enabled_segments: Vec<_> = segments
             .into_iter()
             .filter(|(config, _)| config.enabled)
             .collect();
 
-        for (config, data) in enabled_segments.iter() {
-            let rendered = self.render_segment(config, data);
-            if !rendered.is_empty() {
-                output.push(rendered);
+        // Collect inline-only configs for powerline arrow support
+        let mut inline_configs: Vec<(SegmentConfig, SegmentData)> = Vec::new();
+
+        for (config, data) in enabled_segments.into_iter() {
+            let rendered = self.render_segment(&config, &data);
+            if rendered.is_empty() {
+                continue;
+            }
+            let is_block = data.metadata.get("block_display").is_some()
+                || rendered.contains('\n');
+            if is_block {
+                // Block segment: rendered on its own line(s) below inline segments
+                for line in rendered.split('\n') {
+                    if !line.is_empty() {
+                        block_lines.push(line.to_string());
+                    }
+                }
+            } else {
+                inline_output.push(rendered);
+                inline_configs.push((config, data));
             }
         }
 
-        if output.is_empty() {
+        if inline_output.is_empty() && block_lines.is_empty() {
             return String::new();
         }
 
-        // Handle Powerline arrow separators with color transition
-        if self.config.style.separator == "\u{e0b0}" {
-            self.join_with_powerline_arrows(&output, &enabled_segments)
+        // Join inline segments on line 1
+        let mut result = if self.config.style.separator == "\u{e0b0}" {
+            self.join_with_powerline_arrows(&inline_output, &inline_configs)
         } else {
-            // For all other separators, use white color and simple join
-            self.join_with_white_separators(&output)
+            self.join_with_white_separators(&inline_output)
+        };
+
+        // Append block (multi-line) segments as separate lines
+        for line in block_lines {
+            result.push('\n');
+            result.push_str(&line);
         }
+
+        result
     }
 
     /// Generate statusline for TUI preview with proper width calculation
@@ -240,7 +264,11 @@ impl StatusLineGenerator {
                 )
                 .replace("\x1b[0m", "");
 
-            let mut segment_content = format!(" {} {} ", icon_colored, text_styled);
+            let mut segment_content = if icon.is_empty() {
+                format!(" {} ", text_styled)
+            } else {
+                format!(" {} {} ", icon_colored, text_styled)
+            };
 
             if !data.secondary.is_empty() {
                 let secondary_styled = self
@@ -264,7 +292,11 @@ impl StatusLineGenerator {
                 config.styles.text_bold,
             );
 
-            let mut segment = format!("{} {}", icon_colored, text_styled);
+            let mut segment = if icon.is_empty() {
+                text_styled.clone()
+            } else {
+                format!("{} {}", icon_colored, text_styled)
+            };
 
             if !data.secondary.is_empty() {
                 segment.push_str(&format!(

@@ -43,18 +43,18 @@
 
 ```bash
 # 全局安装
-npm install -g @cometix/ccline
+npm install -g @nekoline/ccline
 
 # 或使用 yarn
-yarn global add @cometix/ccline
+yarn global add @nekoline/ccline
 
 # 或使用 pnpm
-pnpm add -g @cometix/ccline
+pnpm add -g @nekoline/ccline
 ```
 
 使用镜像源加速下载：
 ```bash
-npm install -g @cometix/ccline --registry https://registry.npmmirror.com
+npm install -g @nekoline/ccline --registry https://registry.npmmirror.com
 ```
 
 安装后：
@@ -96,20 +96,20 @@ npm install -g @cometix/ccline --registry https://registry.npmmirror.com
 ### 更新
 
 ```bash
-npm update -g @cometix/ccline
+npm update -g @nekoline/ccline
 ```
 
 <details>
 <summary>手动安装（点击展开）</summary>
 
-或者从 [Releases](https://github.com/Haleclipse/CCometixLine/releases) 手动下载：
+或者从 [Releases](https://github.com/LemonYangZW/CCometixLine/releases) 手动下载：
 
 #### Linux
 
 #### 选项 1: 动态链接版本（推荐）
 ```bash
 mkdir -p ~/.claude/ccline
-wget https://github.com/Haleclipse/CCometixLine/releases/latest/download/ccline-linux-x64.tar.gz
+wget https://github.com/LemonYangZW/CCometixLine/releases/latest/download/ccline-linux-x64.tar.gz
 tar -xzf ccline-linux-x64.tar.gz
 cp ccline ~/.claude/ccline/
 chmod +x ~/.claude/ccline/ccline
@@ -119,7 +119,7 @@ chmod +x ~/.claude/ccline/ccline
 #### 选项 2: 静态链接版本（通用兼容）
 ```bash
 mkdir -p ~/.claude/ccline
-wget https://github.com/Haleclipse/CCometixLine/releases/latest/download/ccline-linux-x64-static.tar.gz
+wget https://github.com/LemonYangZW/CCometixLine/releases/latest/download/ccline-linux-x64-static.tar.gz
 tar -xzf ccline-linux-x64-static.tar.gz
 cp ccline ~/.claude/ccline/
 chmod +x ~/.claude/ccline/ccline
@@ -130,7 +130,7 @@ chmod +x ~/.claude/ccline/ccline
 
 ```bash  
 mkdir -p ~/.claude/ccline
-wget https://github.com/Haleclipse/CCometixLine/releases/latest/download/ccline-macos-x64.tar.gz
+wget https://github.com/LemonYangZW/CCometixLine/releases/latest/download/ccline-macos-x64.tar.gz
 tar -xzf ccline-macos-x64.tar.gz
 cp ccline ~/.claude/ccline/
 chmod +x ~/.claude/ccline/ccline
@@ -140,7 +140,7 @@ chmod +x ~/.claude/ccline/ccline
 
 ```bash
 mkdir -p ~/.claude/ccline  
-wget https://github.com/Haleclipse/CCometixLine/releases/latest/download/ccline-macos-arm64.tar.gz
+wget https://github.com/LemonYangZW/CCometixLine/releases/latest/download/ccline-macos-arm64.tar.gz
 tar -xzf ccline-macos-arm64.tar.gz
 cp ccline ~/.claude/ccline/
 chmod +x ~/.claude/ccline/ccline
@@ -151,7 +151,7 @@ chmod +x ~/.claude/ccline/ccline
 ```powershell
 # 创建目录并下载
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.claude\ccline"
-Invoke-WebRequest -Uri "https://github.com/Haleclipse/CCometixLine/releases/latest/download/ccline-windows-x64.zip" -OutFile "ccline-windows-x64.zip"
+Invoke-WebRequest -Uri "https://github.com/LemonYangZW/CCometixLine/releases/latest/download/ccline-windows-x64.zip" -OutFile "ccline-windows-x64.zip"
 Expand-Archive -Path "ccline-windows-x64.zip" -DestinationPath "."
 Move-Item "ccline.exe" "$env:USERPROFILE\.claude\ccline\"
 ```
@@ -161,7 +161,7 @@ Move-Item "ccline.exe" "$env:USERPROFILE\.claude\ccline\"
 ### 从源码构建
 
 ```bash
-git clone https://github.com/Haleclipse/CCometixLine.git
+git clone https://github.com/LemonYangZW/CCometixLine.git
 cd CCometixLine
 cargo build --release
 cp target/release/ccometixline ~/.claude/ccline/ccline

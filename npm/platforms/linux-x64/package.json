@@ -1,5 +1,5 @@
 {
-  "name": "@cometix/ccline-linux-x64",
+  "name": "@nekoline/ccline-linux-x64",
   "version": "0.0.0",
   "description": "Linux x64 binary for CCometixLine",
   "files": ["ccline"],
@@ -7,8 +7,8 @@
   "cpu": ["x64"],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Haleclipse/CCometixLine"
+    "url": "https://github.com/LemonYangZW/CCometixLine"
   },
-  "author": "Haleclipse",
+  "author": "LemonYangZW",
   "license": "MIT"
 }

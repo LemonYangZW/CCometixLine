@@ -1,72 +1,60 @@
-# CCometixLine
+# CCometixLine (Fork)
 
 [English](README.md) | [中文](README.zh.md)
 
-A high-performance Claude Code statusline tool written in Rust with Git integration, usage tracking, interactive TUI configuration, and Claude Code enhancement utilities.
+A high-performance Claude Code statusline tool written in Rust. This fork adds **Sub2API enterprise usage tracking** with heat-gradient progress bars, automated admin API chain, and TUI options editor.
+
+> Forked from [Haleclipse/CCometixLine](https://github.com/Haleclipse/CCometixLine)
 
 ![Language:Rust](https://img.shields.io/static/v1?label=Language&message=Rust&color=orange&style=flat-square)
 ![License:MIT](https://img.shields.io/static/v1?label=License&message=MIT&color=blue&style=flat-square)
 
+## What's New in This Fork
+
+### Sub2API Usage Tracking
+- **5H / 7D progress bars** with real-time Anthropic account utilization
+- **Heat-gradient rendering**: teal -> green -> lime -> yellow -> orange -> red
+- **Sub-block precision**: Unicode partial blocks (160 discrete levels at width=20)
+- **Reset countdown**: pulsing diamond indicator with time-to-reset
+- **4-source data pipeline** (priority order):
+  1. Claude Code stdin `rate_limits`
+  2. Sub2API Admin API (login -> key resolve -> usage log -> account usage)
+  3. Sub2API Gateway `/v1/usage`
+  4. Anthropic OAuth
+
+### Auto Admin Chain
+- **Zero-config account detection**: Automatically discovers which upstream Claude account is in use via the latest usage log record
+- **JWT + API key caching**: Auth cache (1h TTL) and usage cache (60s TTL) minimize API calls
+- **Admin key resolution**: Searches all users' keys via admin endpoints to match `ANTHROPIC_AUTH_TOKEN`
+
+### TUI Options Editor
+- Configure Sub2API credentials, bar style, cache durations directly in `ccline -c`
+- Schema-driven modal popup with Text / Password / Number field types
+
 ## Screenshots
 
-![CCometixLine](assets/img1.png)
-
-The statusline shows: Model | Directory | Git Branch Status | Context Window Information
-
-## Features
-
-### Core Functionality
-- **Git integration** with branch, status, and tracking info  
-- **Model display** with simplified Claude model names
-- **Usage tracking** based on transcript analysis
-- **Directory display** showing current workspace
-- **Minimal design** using Nerd Font icons
-
-### Interactive TUI Features
-- **Interactive main menu** when executed without input
-- **TUI configuration interface** with real-time preview
-- **Theme system** with multiple built-in presets
-- **Segment customization** with granular control
-- **Configuration management** (init, check, edit)
-
-### Claude Code Enhancement
-- **Context warning disabler** - Remove annoying "Context low" messages
-- **Verbose mode enabler** - Enhanced output detail
-- **Robust patcher** - Survives Claude Code version updates
-- **Automatic backups** - Safe modification with easy recovery
+```
+🤖 Opus 4.6 | 📁 CCometixLine | 🌿 master ● | ⚡️ 10.3% · 103.5k | 💰 $17.95 | 🎯 nekomata-engineer
+5H ▕████████████▋░░░░░░░▏ 63% ◆ 27m  7D ▕█▊░░░░░░░░░░░░░░░░░░▏ 9% ◆ 6d 14h
+```
 
 ## Installation
 
 ### Quick Install (Recommended)
 
-Install via npm (works on all platforms):
-
 ```bash
 # Install globally
-npm install -g @cometix/ccline
+npm install -g @nekoline/ccline
 
-# Or using yarn
-yarn global add @cometix/ccline
-
-# Or using pnpm
-pnpm add -g @cometix/ccline
+# Or using yarn/pnpm
+yarn global add @nekoline/ccline
+pnpm add -g @nekoline/ccline
 ```
-
-Use npm mirror for faster download:
-```bash
-npm install -g @cometix/ccline --registry https://registry.npmmirror.com
-```
-
-After installation:
-- ✅ Global command `ccline` is available everywhere
-- ⚙️ Follow the configuration steps below to integrate with Claude Code
-- 🎨 Run `ccline -c` to open configuration panel for theme selection
 
 ### Claude Code Configuration
 
 Add to your Claude Code `settings.json`:
 
-**Cross-Platform (Recommended)**
 ```json
 {
   "statusLine": {
@@ -77,91 +65,41 @@ Add to your Claude Code `settings.json`:
 }
 ```
 
-> **Note for Windows users:** Starting from Claude Code v2.1.47+, Unix-style path parsing is supported on Windows. The `~` symbol is automatically expanded to your user home directory. **Do not use `%USERPROFILE%`** - it no longer works reliably in v2.1.47+.
-> - Recommended: `~/.claude/ccline/ccline` (works on all platforms)
-> - Alternative: `"ccline"` (requires npm global installation)
+> **Windows:** Use `~/.claude/ccline/ccline` (Unix-style path works on Claude Code v2.1.47+).
 
-**Fallback (npm installation):**
-```json
-{
-  "statusLine": {
-    "type": "command",
-    "command": "ccline",
-    "padding": 0
-  }
-}
+### Sub2API Usage Configuration
+
+Run `ccline -c`, navigate to Usage segment -> Options, and configure:
+
+| Field | Description |
+|-------|-------------|
+| Admin Email | Sub2API admin login email |
+| Admin Password | Sub2API admin login password |
+| API Base URL | Your Sub2API gateway URL (auto-detected from `ANTHROPIC_BASE_URL`) |
+| Bar Style | `heat` (gradient) / `block` (classic) |
+| Bar Width | Progress bar width in chars (default: 20) |
+| Cache Duration | Usage data refresh interval in seconds (default: 60) |
+| Auth Cache Duration | JWT token cache TTL in seconds (default: 3600) |
+
+Or edit `~/.claude/ccline/config.toml` directly:
+
+```toml
+[segments.options]
+admin_email = "admin@sub2api.local"
+admin_password = "your-password"
+api_base_url = "https://your-sub2api.com"
+bar_style = "heat"
+bar_colored = "true"
+bar_width = 20
+cache_duration = 60
+auth_cache_duration = 3600
+timeout = 5
 ```
-*Use this if npm global installation is available in PATH*
-
-### Update
-
-```bash
-npm update -g @cometix/ccline
-```
-
-<details>
-<summary>Manual Installation (Click to expand)</summary>
-
-Alternatively, download from [Releases](https://github.com/Haleclipse/CCometixLine/releases):
-
-#### Linux
-
-#### Option 1: Dynamic Binary (Recommended)
-```bash
-mkdir -p ~/.claude/ccline
-wget https://github.com/Haleclipse/CCometixLine/releases/latest/download/ccline-linux-x64.tar.gz
-tar -xzf ccline-linux-x64.tar.gz
-cp ccline ~/.claude/ccline/
-chmod +x ~/.claude/ccline/ccline
-```
-*Requires: Ubuntu 22.04+, CentOS 9+, Debian 11+, RHEL 9+ (glibc 2.35+)*
-
-#### Option 2: Static Binary (Universal Compatibility)
-```bash
-mkdir -p ~/.claude/ccline
-wget https://github.com/Haleclipse/CCometixLine/releases/latest/download/ccline-linux-x64-static.tar.gz
-tar -xzf ccline-linux-x64-static.tar.gz
-cp ccline ~/.claude/ccline/
-chmod +x ~/.claude/ccline/ccline
-```
-*Works on any Linux distribution (static, no dependencies)*
-
-#### macOS (Intel)
-
-```bash  
-mkdir -p ~/.claude/ccline
-wget https://github.com/Haleclipse/CCometixLine/releases/latest/download/ccline-macos-x64.tar.gz
-tar -xzf ccline-macos-x64.tar.gz
-cp ccline ~/.claude/ccline/
-chmod +x ~/.claude/ccline/ccline
-```
-
-#### macOS (Apple Silicon)
-
-```bash
-mkdir -p ~/.claude/ccline  
-wget https://github.com/Haleclipse/CCometixLine/releases/latest/download/ccline-macos-arm64.tar.gz
-tar -xzf ccline-macos-arm64.tar.gz
-cp ccline ~/.claude/ccline/
-chmod +x ~/.claude/ccline/ccline
-```
-
-#### Windows
-
-```powershell
-# Create directory and download
-New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.claude\ccline"
-Invoke-WebRequest -Uri "https://github.com/Haleclipse/CCometixLine/releases/latest/download/ccline-windows-x64.zip" -OutFile "ccline-windows-x64.zip"
-Expand-Archive -Path "ccline-windows-x64.zip" -DestinationPath "."
-Move-Item "ccline.exe" "$env:USERPROFILE\.claude\ccline\"
-```
-
-</details>
 
 ### Build from Source
 
 ```bash
-git clone https://github.com/Haleclipse/CCometixLine.git
+git clone https://github.com/LemonYangZW/CCometixLine.git
 cd CCometixLine
 cargo build --release
 
@@ -175,141 +113,34 @@ New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.claude\ccline"
 copy target\release\ccometixline.exe "$env:USERPROFILE\.claude\ccline\ccline.exe"
 ```
 
-## Usage
+## Features (Inherited)
 
-### Theme Override
-
-```bash
-# Temporarily use specific theme (overrides config file)
-ccline --theme cometix
-ccline --theme minimal
-ccline --theme gruvbox
-ccline --theme nord
-ccline --theme powerline-dark
-
-# Or use custom theme files from ~/.claude/ccline/themes/
-ccline --theme my-custom-theme
-```
-
-### Claude Code Enhancement
-
-```bash
-# Disable context warnings and enable verbose mode
-ccline --patch /path/to/claude-code/cli.js
-
-# Example for common installation
-ccline --patch ~/.local/share/fnm/node-versions/v24.4.1/installation/lib/node_modules/@anthropic-ai/claude-code/cli.js
-```
-
-## Default Segments
-
-Displays: `Directory | Git Branch Status | Model | Context Window`
-
-### Git Status Indicators
-
-- Branch name with Nerd Font icon
-- Status: `✓` Clean, `●` Dirty, `⚠` Conflicts  
-- Remote tracking: `↑n` Ahead, `↓n` Behind
-
-### Model Display
-
-Shows simplified Claude model names:
-- `claude-3-5-sonnet` → `Sonnet 3.5`
-- `claude-4-sonnet` → `Sonnet 4`
-
-### Context Window Display
-
-Token usage percentage based on transcript analysis with context limit tracking.
+- **Git integration** with branch, status, and tracking info
+- **Model display** with simplified Claude model names
+- **Context window** token usage tracking
+- **Cost tracking** per session
+- **Interactive TUI** with real-time preview and theme system
+- **Theme presets**: cometix, default, minimal, gruvbox, nord, powerline-dark/light
+- **Claude Code patcher**: Disable context warnings, enable verbose mode
 
 ## Configuration
 
-CCometixLine supports full configuration via TOML files and interactive TUI:
-
-- **Configuration file**: `~/.claude/ccline/config.toml`
-- **Interactive TUI**: `ccline --config` for real-time editing with preview
-- **Theme files**: `~/.claude/ccline/themes/*.toml` for custom themes
-- **Automatic initialization**: `ccline --init` creates default configuration
-
-### Available Segments
-
-All segments are configurable with:
-- Enable/disable toggle
-- Custom separators and icons
-- Color customization
-- Format options
-
-Supported segments: Directory, Git, Model, Usage, Time, Cost, OutputStyle
-
-### Model Configuration (`models.toml`)
-
-Location: `~/.claude/ccline/models.toml` (auto-created on first run)
-
-This file configures how model IDs are displayed and their context window limits. Claude models (Sonnet, Opus, Haiku) are automatically recognized with version extraction — you only need this file for overrides or third-party models.
-
-```toml
-# Model entries: simple substring matching on the model ID
-# These take priority over built-in Claude model recognition
-[[models]]
-pattern = "glm-4.5"
-display_name = "GLM-4.5"
-context_limit = 128000
-
-[[models]]
-pattern = "kimi-k2"
-display_name = "Kimi K2"
-context_limit = 128000
-
-# Context modifiers: matched independently and composable with model entries
-# Overrides context_limit and appends display_suffix to the display name
-# e.g., model "Opus 4" + modifier " 1M" = "Opus 4 1M"
-[[context_modifiers]]
-pattern = "[1m]"
-display_suffix = " 1M"
-context_limit = 1000000
-```
-
+- **Config file**: `~/.claude/ccline/config.toml`
+- **Interactive TUI**: `ccline -c`
+- **Theme files**: `~/.claude/ccline/themes/*.toml`
+- **Model config**: `~/.claude/ccline/models.toml`
 
 ## Requirements
 
-- **Git**: Version 1.5+ (Git 2.22+ recommended for better branch detection)
-- **Terminal**: Must support Nerd Fonts for proper icon display
-  - Install a [Nerd Font](https://www.nerdfonts.com/) (e.g., FiraCode Nerd Font, JetBrains Mono Nerd Font)
-  - Configure your terminal to use the Nerd Font
+- **Git**: 1.5+ (2.22+ recommended)
+- **Terminal**: Nerd Font support for icons ([nerdfonts.com](https://www.nerdfonts.com/))
 - **Claude Code**: For statusline integration
-
-## Development
-
-```bash
-# Build development version
-cargo build
-
-# Run tests
-cargo test
-
-# Build optimized release
-cargo build --release
-```
-
-## Roadmap
-
-- [x] TOML configuration file support
-- [x] TUI configuration interface
-- [x] Custom themes
-- [x] Interactive main menu
-- [x] Claude Code enhancement tools
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit issues or pull requests.
-
-## Related Projects
-
-- [tweakcc](https://github.com/Piebald-AI/tweakcc) - Command-line tool to customize your Claude Code themes, thinking verbs, and more.
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+[MIT License](LICENSE)
 
-## Star History
+## Credits
 
-[![Star History Chart](https://api.star-history.com/svg?repos=Haleclipse/CCometixLine&type=Date)](https://star-history.com/#Haleclipse/CCometixLine&Date)
+- Original project: [Haleclipse/CCometixLine](https://github.com/Haleclipse/CCometixLine)
+- Sub2API: [Wei-Shaw/sub2api](https://github.com/Wei-Shaw/sub2api)
