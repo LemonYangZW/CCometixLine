@@ -1,6 +1,6 @@
 [package]
 name = "ccometixline"
-version = "1.1.2-nekoline.1"
+version = "1.1.2-nekoline.2"
 edition = "2021"
 description = "CCometixLine (ccline) - High-performance Claude Code StatusLine tool with Sub2API usage tracking"
 authors = ["LemonYangZW", "Haleclipse"]
